@@ -1,51 +1,80 @@
-#include <stdio.h>
-#include <stdarg.h>
 #include "main.h"
 
 /**
- * _printf - my printf function
+ * _printf - My printf function
  * @format: format of the output
- *
- * Return: number of characters printed (excluding  ending null byte)
+ * Return: No. of characters printed excluding the ending null byte(\n)
  */
-
 int _printf(const char *format, ...)
 
 {
+	char *str;
+	va_list args;
+	int count = 0;
 
-	va_list list;
-	int i = 0, j, count = 0;
+	va_start(args, format);
 
-	va_start(list, format);
-
-	while (format[i])
+	while (*format)
 	{
-		if (format[i] == '%')
+		if (*format == '%')
 		{
-			if (format[i + 1] == 'c')
-			{
-				_putchar(va_arg(list, int));
-				count++;
-			}
-			else if (format[i + 1] == 's')
-			{
-				char *string;
-
-				string = va_arg(list, char *);
-				for (j = 0; string[j]; j++)
-					_putchar(string[j]), count++;
-			}
-			else if (format[i + 1] == '%')
-			{
-				_putchar('%'), count++;
-			}
-			i++;
+			format++;
+		switch (*format)
+		{
+			case 'c':
+				count += _putchar(va_arg(args, int));
+				break;
+			case 's':
+				str = va_arg(args, char *);
+				count += _puts(str);
+				break;
+			case '%':
+				count += _putchar('%');
+				break;
+			default:
+				count += _putchar('%');
+				count += _putchar(*format);
+				break;
+		}
 		}
 		else
-			_putchar(format[i]), count++;
-		i++;
+		{
+			count += _putchar(*format);
+		}
+
+		format++;
 	}
 
-	a_end(list);
+	va_end(args);
+
 	return (count);
+}
+
+/**
+ * _puts - Prints a string to stdout
+ * @str: The string to be printed
+ * Return: The number of characters printed
+ */
+int _puts(char *str)
+{
+	int k = 0;
+
+	while (str[k])
+	{
+		_putchar(str[k]);
+		k++;
+	}
+	return (k);
+}
+
+
+/**
+ * _putchar - Prints a character to stdout
+ * @c: The character to be printed
+ * Return: On success, the character written. On error, -1 is returned.
+ */
+
+int _putchar(char c)
+{
+	return (write(1, &c, 1));
 }
